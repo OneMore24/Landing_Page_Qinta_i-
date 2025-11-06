@@ -54,19 +54,9 @@
         }
         
         .hero-bg {
-            background: linear-gradient(135deg, rgba(254, 252, 232, 0.9) 0%, rgba(254, 243, 199, 0.8) 100%), 
-                        url('coca.jpeg');
+            background: linear-gradient(135deg, rgba(254, 252, 232, 0.9) 0%, rgba(254, 243, 199, 0.8) 100%);
             background-size: cover;
             background-position: center;
-        }
-        
-        .section-divider {
-            height: 100px;
-            background: linear-gradient(to bottom right, transparent 49%, var(--brand-green) 50%),
-                        linear-gradient(to bottom left, transparent 49%, var(--brand-green) 50%);
-            background-size: 50% 100%;
-            background-repeat: no-repeat;
-            background-position: left, right;
         }
         
         .ingredient-card {
@@ -116,6 +106,7 @@
                 <a href="#ingredientes" class="text-gray-600 hover:text-brand-green transition-colors duration-300">Ingredientes</a>
                 <a href="#tecnologia" class="text-gray-600 hover:text-brand-green transition-colors duration-300">Tecnología</a>
                 <a href="#equipo" class="text-gray-600 hover:text-brand-green transition-colors duration-300">Equipo</a>
+                <a href="#qr-section" class="text-gray-600 hover:text-brand-green transition-colors duration-300">Compartir</a>
                 <a href="#contacto" class="bg-brand-green text-white px-4 py-2 rounded-full hover:bg-emerald-800 transition-all duration-300 transform hover:scale-105">Contáctanos</a>
             </div>
             <div class="md:hidden">
@@ -136,6 +127,7 @@
             <a href="#ingredientes" class="block py-2 text-gray-600 hover:text-brand-green">Ingredientes</a>
             <a href="#tecnologia" class="block py-2 text-gray-600 hover:text-brand-green">Tecnología</a>
             <a href="#equipo" class="block py-2 text-gray-600 hover:text-brand-green">Equipo</a>
+            <a href="#qr-section" class="block py-2 text-gray-600 hover:text-brand-green">Compartir</a>
             <a href="#contacto" class="block mt-2 bg-brand-green text-white px-4 py-2 rounded-full text-center">Contáctanos</a>
         </div>
     </header>
@@ -431,6 +423,32 @@
         </div>
     </section>
 
+    <!-- Sección QR para compartir -->
+    <section id="qr-section" class="py-16 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold text-brand-green mb-6" data-aos="fade-up">Comparte QINTA</h2>
+            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                Escanea este código QR para acceder rápidamente a nuestra página web y compártelo con quien quieras.
+            </p>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-lg inline-block" data-aos="zoom-in">
+                <!-- Aquí se generará el QR automáticamente -->
+                <div id="qrcode" class="mx-auto mb-4"></div>
+                <p class="text-sm text-gray-500">Escanea para visitar QINTA</p>
+            </div>
+            
+            <div class="mt-8">
+                <p class="text-gray-600 mb-4">Tu URL de Netlify:</p>
+                <div class="bg-gray-100 p-3 rounded-lg max-w-md mx-auto">
+                    <code id="netlify-url" class="text-sm break-all">https://tu-sitio.netlify.app</code>
+                </div>
+                <button onclick="copyUrl()" class="mt-2 bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-emerald-800 transition-colors">
+                    Copiar URL
+                </button>
+            </div>
+        </div>
+    </section>
+
     <!-- Sección CTA Final (Contacto) -->
     <section id="contacto" class="py-16 md:py-24 bg-brand-green text-white">
         <div class="container mx-auto px-6 text-center">
@@ -486,6 +504,7 @@
                     <a href="#beneficios" class="hover:text-white transition-colors">Beneficios</a>
                     <a href="#ingredientes" class="hover:text-white transition-colors">Ingredientes</a>
                     <a href="#equipo" class="hover:text-white transition-colors">Equipo</a>
+                    <a href="#qr-section" class="hover:text-white transition-colors">Compartir</a>
                     <a href="#contacto" class="hover:text-white transition-colors">Contacto</a>
                 </div>
             </div>
@@ -497,6 +516,9 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- Librería para generar QR -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
     <script>
         // Inicializar AOS (Animate On Scroll)
         document.addEventListener('DOMContentLoaded', function() {
@@ -522,7 +544,46 @@
                     mobileMenu.classList.add('hidden');
                 });
             });
+            
+            // Generar QR automáticamente con la URL actual
+            // Obtener la URL actual
+            const currentUrl = window.location.href;
+            
+            // Mostrar la URL en el elemento
+            document.getElementById('netlify-url').textContent = currentUrl;
+            
+            // Generar el código QR
+            const qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: currentUrl,
+                width: 200,
+                height: 200,
+                colorDark: "#166534",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
         });
+
+        // Función para copiar la URL
+        function copyUrl() {
+            const urlElement = document.getElementById('netlify-url');
+            const url = urlElement.textContent;
+            
+            navigator.clipboard.writeText(url).then(function() {
+                // Cambiar temporalmente el texto del botón
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '¡Copiado!';
+                button.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Error al copiar: ', err);
+                alert('No se pudo copiar la URL. Por favor, cópiala manualmente.');
+            });
+        }
     </script>
 
 </body>
